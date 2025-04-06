@@ -67,8 +67,8 @@ jobs:
         run: |
           cd /repository/binpkgs
           xbps-rindex -r $PWD
-          XBPS_PASSPHRASE=${{ secrets.SUPERBIA }} xbps-rindex --sign --signedby "Shiraori archive" --privkey /repository/shiraori.pem $PWD
-          XBPS_PASSPHRASE=${{ secrets.SUPERBIA }} xbps-rindex --sign-pkg --privkey /repository/shiraori.pem $PWD/*.xbps
+          XBPS_PASSPHRASE=${{ secrets.SUPERBIA }} xbps-rindex --sign --signedby "xJayMorex" --privkey /repository/xJayMorex.pem $PWD
+          XBPS_PASSPHRASE=${{ secrets.SUPERBIA }} xbps-rindex --sign-pkg --privkey /repository/xJayMorex.pem $PWD/*.xbps
           xbps-rindex -c $PWD
           sha256sum ungoogled-chromium-${{ needs.Fetch.outputs.version }}.${{ matrix.arch }}.xbps | tee -a ${{ github.workspace }}/void-packages/sum
 
@@ -87,7 +87,6 @@ jobs:
           body_path: ${{ github.workspace }}/void-packages/sum
           files: |
             /repository/binpkgs/ungoogled-chromium-${{ needs.Fetch.outputs.version }}.*.xbps
-            /repository/binpkgs/ungoogled-chromium-${{ needs.Fetch.outputs.version }}.*.sig
             /repository/binpkgs/ungoogled-chromium-${{ needs.Fetch.outputs.version }}.*.sig2
             /repository/binpkgs/*-repodata
           tag_name: ${{ needs.Fetch.outputs.version }}

@@ -1,7 +1,7 @@
 # Ungoogled Chromium for Void Linux  
 Ungoogled Chromium template and builds for Void Linux, based on the void-packages [chromium][1] template.
 
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/DAINRA/ungoogled-chromium-void?style=flat-square)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/xJayMorex/ungoogled-chromium-void?style=flat-square)
 
 ## Content Overview
 
@@ -27,7 +27,7 @@ Ungoogled Chromium template and builds for Void Linux, based on the void-package
 Clone and setup the void-packages repository in a work directory and:
 
 ```shell
-git clone --depth=1 https://github.com/DAINRA/ungoogled-chromium-void.git
+git clone --depth=1 https://github.com/xJayMorex/ungoogled-chromium-void.git
 [[ -d void-packages/srcpkgs/ungoogled-chromium ]] && rm -r void-packages/srcpkgs/ungoogled-chromium
 cp -r ungoogled-chromium-void/void-packages/srcpkgs/ungoogled-chromium void-packages/srcpkgs/
 cd void-packages
@@ -52,15 +52,15 @@ cd void-packages
 
 You can check the workflow file for the available builds:
 
-https://github.com/DAINRA/ungoogled-chromium-void/blob/17c6b58ef263d3dc2868102a0b9b6398de140c92/.github/workflows/create-release.yml#L35-L40
+https://github.com/xJayMorex/ungoogled-chromium-void/blob/17c6b58ef263d3dc2868102a0b9b6398de140c92/.github/workflows/create-release.yml#L35-L40
 
-and the Actions tab for current [build progress](//github.com/DAINRA/ungoogled-chromium-void/actions/workflows/create-release.yml).
+and the Actions tab for current [build progress](//github.com/xJayMorex/ungoogled-chromium-void/actions/workflows/create-release.yml).
 
 ### Installing the binary package
 
 #### Method 1 - manual update
 
-Download the `xbps` package from the [releases](//github.com/DAINRA/ungoogled-chromium-void/releases) page, index and install the package:
+Download the `xbps` package from the [releases](//github.com/xJayMorex/ungoogled-chromium-void/releases) page, index and install the package:
 
 ```shell
 xbps-rindex -a *.xbps
@@ -73,12 +73,12 @@ Add the releases page as a repository:
 
 ```shell
 cat << EOF > /etc/xbps.d/20-ungoogled-chromium.conf
-repository=https://github.com/DAINRA/ungoogled-chromium-void/releases/latest/download/
+repository=https://github.com/xJayMorex/ungoogled-chromium-void/releases/latest/download/
 EOF
 xbps-install -Su ungoogled-chromium
 ```
 
-First `xbps-install -S` run it will ask to import the repository key, same as [91:aa:05:51:81:3f:38:b6:6a:74:af:3f:40:2d:08:c3.plist](void-packages/common/repo-keys/91:aa:05:51:81:3f:38:b6:6a:74:af:3f:40:2d:08:c3.plist).
+First `xbps-install -S` run it will ask to import the repository key, same as [34:b9:fb:a7:ae:42:5d:d5:5e:b9:92:3d:aa:5c:23:de.plist](void-packages/common/repo-keys/34:b9:fb:a7:ae:42:5d:d5:5e:b9:92:3d:aa:5c:23:de.plist).
 
 ## Troubleshooting
 
