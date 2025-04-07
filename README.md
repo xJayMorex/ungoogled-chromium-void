@@ -38,13 +38,15 @@ cd void-packages
 
 ```shell
 ./xbps-src show-options ungoogled-chromium
-=> ungoogled-chromium-120.0.6099.109_1: the following build options are set:
+=> ungoogled-chromium-135.0.7049.52_1: the following build options are set:
    clang: Use clang to build (ON)
    libcxx: Use bundled libc++ (ON)
    pipewire: Enable support for screen sharing for WebRTC via PipeWire (ON)
    pulseaudio: Enable support for the PulseAudio sound server (ON)
    vaapi: Enable support for VA-API (ON)
    debug: Build with debug symbols (OFF)
+   drumbrake: WebAssembly Interpreter (OFF)
+   lto: Enable Link Time Optimization (OFF)
    sndio: Enable support for the sndio sound server (OFF)
 ```
 
@@ -78,7 +80,7 @@ EOF
 xbps-install -Su ungoogled-chromium
 ```
 
-First `xbps-install -S` run it will ask to import the repository key, same as [34:b9:fb:a7:ae:42:5d:d5:5e:b9:92:3d:aa:5c:23:de.plist](void-packages/common/repo-keys/34:b9:fb:a7:ae:42:5d:d5:5e:b9:92:3d:aa:5c:23:de.plist).
+First `xbps-install -S` run it will ask to import the repository key, same as [8e:9c:f9:9a:cd:77:2a:3c:25:54:61:c1:36:25:f0:4f.plist](void-packages/common/repo-keys/8e:9c:f9:9a:cd:77:2a:3c:25:54:61:c1:36:25:f0:4f.plist).
 
 ## Troubleshooting
 
@@ -105,6 +107,7 @@ First `xbps-install -S` run it will ask to import the repository key, same as [3
 ## Credits
 
 - [Ungoogled Chromium](//github.com/ungoogled-software/ungoogled-chromium)
+- [Ungoogled Chromium Void upstream](//github.com/DAINRA/ungoogled-chromium-void)
 - [The Void source packages collection](//github.com/void-linux/void-packages)
 - [The Void (Linux) distribution](//voidlinux.org/)
 
