@@ -24,7 +24,7 @@ Ungoogled Chromium template and builds for Void Linux, based on the void-package
 >
 > [*Building packages natively for the musl C library*][2b]
 
-Clone and setup the void-packages repository in a work directory and:
+The lazy way:
 
 ```shell
 git clone --depth=1 https://github.com/xJayMorex/ungoogled-chromium-void.git
