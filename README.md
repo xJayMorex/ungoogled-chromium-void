@@ -28,10 +28,8 @@ Clone and setup the void-packages repository in a work directory and:
 
 ```shell
 git clone --depth=1 https://github.com/xJayMorex/ungoogled-chromium-void.git
-[[ -d void-packages/srcpkgs/ungoogled-chromium ]] && rm -r void-packages/srcpkgs/ungoogled-chromium
-cp -r ungoogled-chromium-void/void-packages/srcpkgs/ungoogled-chromium void-packages/srcpkgs/
-cd void-packages
-./xbps-src pkg ungoogled-chromium
+cd ungoogled-chromium-void
+./build.sh
 ```
 
 ## Binary release
