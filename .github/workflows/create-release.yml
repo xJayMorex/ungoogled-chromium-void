@@ -39,7 +39,7 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        arch: [x86_64, x86_64-musl]
+        arch: [x86_64, x86_64-musl, aarch64, aarch64-musl]
     runs-on: self-hosted
     steps:
       - name: Bootstrap ${{ matrix.arch }}
@@ -53,7 +53,7 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        arch: [x86_64, x86_64-musl]
+        arch: [x86_64, x86_64-musl, aarch64, aarch64-musl]
     runs-on: self-hosted
     timeout-minutes: 1440
     env:
