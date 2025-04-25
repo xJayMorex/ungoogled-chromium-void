@@ -245,7 +245,8 @@ do_configure() {
 		'use_system_harfbuzz=false'
 		'use_system_libffi=true'
 
-		'use_qt=false'
+		'use_qt5=false'
+		'use_qt6=false'
 
 		'use_cups=true'
 
