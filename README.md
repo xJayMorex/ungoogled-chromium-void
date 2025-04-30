@@ -52,7 +52,7 @@ cd ungoogled-chromium-void
 
 You can check the workflow file for the available builds:
 
-https://github.com/xJayMorex/ungoogled-chromium-void/blob/f85420bc36ed534b9e38b406b44c9d9d766b6305/.github/workflows/create-release.yml#L37-L42
+https://github.com/xJayMorex/ungoogled-chromium-void/blob/a1d45edd464c85041adedb52126ccc9605f618da/.github/workflows/create-release.yml#L37-L42
 
 and the Actions tab for current [build progress](//github.com/xJayMorex/ungoogled-chromium-void/actions/workflows/create-release.yml).
 
