@@ -56,6 +56,9 @@ git checkout -q $CHROMIUM_HASH
 
 cp -r srcpkgs/chromium/patches $UGC/void-packages/srcpkgs/ungoogled-chromium/
 
+# remove redundant patches
+rm $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-130-hardware_destructive_interference_size.patch
+
 git checkout -q master
 
 cd $UGC
