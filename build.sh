@@ -13,9 +13,10 @@ git clean -f
 git fetch
 git pull
 
-./xbps-src binary-bootstrap
-
 cp -r $UGC/void-packages/srcpkgs/ungoogled-chromium srcpkgs/
+
+./xbps-src binary-bootstrap
+./xbps-src zap
 
 XBPS_MAKEJOBS=`nproc` ./xbps-src pkg ungoogled-chromium
 

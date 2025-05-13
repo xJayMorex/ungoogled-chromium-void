@@ -15,17 +15,21 @@ sed -i "s/${1}/${2}/" void-packages/srcpkgs/ungoogled-chromium/template
 
 wget -q https://commondatastorage.googleapis.com/chromium-browser-official/chromium-${1}.tar.xz.hashes -P /tmp/ > /dev/null || { echo "Unable to download chromium-${1}.tar.xz.hashes"; exit 3; }
 OLD_CHROMIUM_HASH=`cat /tmp/chromium-${1}.tar.xz.hashes | grep 'sha256' | awk '{print $2}'`
+rm /tmp/chromium-${1}.tar.xz.hashes
 
 wget -q https://commondatastorage.googleapis.com/chromium-browser-official/chromium-${2}.tar.xz.hashes -P /tmp/ > /dev/null || { echo "Unable to download chromium-${2}.tar.xz.hashes"; exit 4; }
 CHROMIUM_HASH=`cat /tmp/chromium-${2}.tar.xz.hashes | grep 'sha256' | awk '{print $2}'`
+rm /tmp/chromium-${2}.tar.xz.hashes
 
 sed -i "s/$OLD_CHROMIUM_HASH/$CHROMIUM_HASH/" void-packages/srcpkgs/ungoogled-chromium/template
 
 wget -q https://github.com/ungoogled-software/ungoogled-chromium/archive/refs/tags/${1}-${3-1}.tar.gz -P /tmp/ > /dev/null || { echo "Unable to download ${1}-${3-1}.tar.gz"; exit 5; }
 OLD_UNGOOGLED_HASH=`sha256sum /tmp/${1}-${3-1}.tar.gz | awk '{print $1}'`
+rm /tmp/${1}-${3-1}.tar.gz
 
 wget -q https://github.com/ungoogled-software/ungoogled-chromium/archive/refs/tags/${2}-${4-1}.tar.gz -P /tmp/ > /dev/null || { echo "Unable to download ${2}-${4-1}.tar.gz"; exit 6; }
 UNGOOGLED_HASH=`sha256sum /tmp/${2}-${4-1}.tar.gz | awk '{print $1}'`
+rm /tmp/${2}-${4-1}.tar.gz
 
 sed -i "s/$OLD_UNGOOGLED_HASH/$UNGOOGLED_HASH/" void-packages/srcpkgs/ungoogled-chromium/template
 
