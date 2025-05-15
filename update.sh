@@ -77,7 +77,7 @@ LATEST_COMMIT=`git log -n 1 --pretty=format:"%H"`
 git checkout -q master
 git fetch -q
 git pull -q
-git cherry-pick -q $LATEST_COMMIT
+git cherry-pick $LATEST_COMMIT
 git push -q
 
 echo "Pushed ${2} to master ($LATEST_COMMIT)"
