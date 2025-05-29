@@ -40,8 +40,6 @@ jobs:
       max-parallel: 1
       matrix:
         arch: [x86_64, x86_64-musl]
-        exclude:
-          - arch: x86_64
     runs-on: self-hosted
     timeout-minutes: 720
     steps:
