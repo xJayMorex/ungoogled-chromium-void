@@ -43,6 +43,7 @@ cd void-packages
 git reset -q --hard HEAD
 git clean -q -f
 git fetch -q
+git pull -q
 
 CHROMIUM_HASH=`git log -i -n 1 --all-match --grep 'chromium' --grep "${2}" --pretty=format:"%H"`
 
