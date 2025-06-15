@@ -11,7 +11,9 @@ jobs:
   Fetch:
     runs-on: self-hosted
     outputs:
+      package: ${{ steps.version.outputs.package }}
       version: ${{ steps.version.outputs.version }}
+      revision: ${{ steps.version.outputs.revision }}
     environment:
       name: release
     steps:
@@ -32,7 +34,9 @@ jobs:
 
       - id: version
         run: |
-          echo "version=$( cat master/version )" >> $GITHUB_OUTPUT
+          echo "package=ungoogled-chromium" >> $GITHUB_OUTPUT
+          echo "version=$( cat master/void-packages/srcpkgs/ungoogled-chromium/template | grep -m 1 'version=' | awk -F '=' '{ print $2 }' )" >> $GITHUB_OUTPUT
+          echo "revision=$( cat master/void-packages/srcpkgs/ungoogled-chromium/template | grep -m 1 'revision=' | awk -F '=' '{ print $2 }' )" >> $GITHUB_OUTPUT
 
   Build:
     needs: [Fetch]
@@ -47,11 +51,11 @@ jobs:
         run: |
           cd void-packages
           ./xbps-src -H /repository -A ${{ matrix.arch }} binary-bootstrap
-          ./xbps-src -H /repository -A ${{ matrix.arch }} fetch ungoogled-chromium
+          ./xbps-src -H /repository -A ${{ matrix.arch }} fetch ${{ needs.Fetch.outputs.package }}
       - name: Build ${{ matrix.arch }}
         run: |
           cd void-packages
-          ./xbps-src -H /repository -A ${{ matrix.arch }} -C pkg ungoogled-chromium
+          ./xbps-src -H /repository -A ${{ matrix.arch }} -C pkg ${{ needs.Fetch.outputs.package }}
 
   Build-aarch:
     needs: [Fetch, Build]
@@ -67,12 +71,12 @@ jobs:
       - name: Bootstrap ${{ matrix.arch }}
         run: |
           cd void-packages
-          ./xbps-src -H /repository -a ${{ matrix.arch }} binary-bootstrap
-          ./xbps-src -H /repository -a ${{ matrix.arch }} fetch ungoogled-chromium
+          ./xbps-src -H /repository binary-bootstrap
+          ./xbps-src -H /repository -a ${{ matrix.arch }} fetch ${{ needs.Fetch.outputs.package }}
       - name: Build ${{ matrix.arch }}
         run: |
           cd void-packages
-          ./xbps-src -H /repository -a ${{ matrix.arch }} -C pkg ungoogled-chromium
+          ./xbps-src -H /repository -a ${{ matrix.arch }} -C pkg ${{ needs.Fetch.outputs.package }}
 
   Sign:
     needs: [Fetch, Build, Build-aarch]
@@ -89,11 +93,11 @@ jobs:
       - name: Sign ${{ matrix.arch }} package
         run: |
           cd /repository/binpkgs
-          xbps-rindex -r $PWD
+          rm -f ${{ matrix.arch }}-repodata
+          xbps-rindex --add $PWD/${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.${{ matrix.arch }}.xbps
           XBPS_PASSPHRASE=${{ secrets.SUPERBIA }} xbps-rindex --sign --signedby "xJayMorex" --privkey /repository/xJayMorex.pem $PWD
-          XBPS_PASSPHRASE=${{ secrets.SUPERBIA }} xbps-rindex --sign-pkg --privkey /repository/xJayMorex.pem $PWD/ungoogled-chromium-${{ needs.Fetch.outputs.version }}.${{ matrix.arch }}.xbps
-          xbps-rindex -c $PWD
-          sha256sum ungoogled-chromium-${{ needs.Fetch.outputs.version }}.${{ matrix.arch }}.xbps | tee -a ${{ github.workspace }}/void-packages/sum
+          XBPS_PASSPHRASE=${{ secrets.SUPERBIA }} xbps-rindex --sign-pkg --privkey /repository/xJayMorex.pem $PWD/${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.${{ matrix.arch }}.xbps
+          sha256sum ${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.${{ matrix.arch }}.xbps > ${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.${{ matrix.arch }}.xbps.sha256sum
 
   Release:
     needs: [Fetch, Sign]
@@ -102,17 +106,20 @@ jobs:
       - name: Checksum check
         run: |
           cd /repository/binpkgs
-          cat ${{ github.workspace }}/void-packages/sum | sha256sum -c
+          cat ${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.xbps.sha256sum | sha256sum -c
 
       - name: Publish
         uses: softprops/action-gh-release@v2
         with:
-          body_path: ${{ github.workspace }}/void-packages/sum
+          body: |
+            "Chromium release: <a href='https://chromium.googlesource.com/chromium/src/+/refs/tags/${{ needs.Fetch.outputs.version }}'>${{ needs.Fetch.outputs.version }}</a><br>
+            Ungoogled Chromium release: <a href='https://github.com/ungoogled-software/ungoogled-chromium/releases/tag/${{ needs.Fetch.outputs.version }}-${{ needs.Fetch.outputs.revision }}'>${{ needs.Fetch.outputs.version }}-${{ needs.Fetch.outputs.revision }}</a>"
           files: |
-            /repository/binpkgs/ungoogled-chromium-${{ needs.Fetch.outputs.version }}.*.xbps
-            /repository/binpkgs/ungoogled-chromium-${{ needs.Fetch.outputs.version }}.*.sig2
+            /repository/binpkgs/${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.xbps
+            /repository/binpkgs/${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.xbps.sha256sum
+            /repository/binpkgs/${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.sig2
             /repository/binpkgs/*-repodata
-          tag_name: ${{ needs.Fetch.outputs.version }}
+          tag_name: "${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}"
 
   Cleanup:
     needs: [Release]

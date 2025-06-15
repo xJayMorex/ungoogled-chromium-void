@@ -8,10 +8,14 @@ fi
 
 echo "Updating Ungoogled-Chromium Void from version ${1}-${3-1} to version ${2}-${4-1}..."
 
-git checkout -q origin/${1} -b ${2} || { echo "Unable to create branch ${2} from {$1}"; exit 2; }
+if [[ "$1" = "$2" ]]; then
+    git checkout -q ${2} || { echo "Unable to checkout branch ${2}"; exit 2; }
+else
+    git checkout -q origin/${1} -b ${2} || { echo "Unable to create branch ${2} from {$1}"; exit 2; }
+fi
 
-sed -i "s/${1}/${2}/" version
-sed -i "s/${1}/${2}/" void-packages/srcpkgs/ungoogled-chromium/template
+sed -i "s/version=${1}/version=${2}/" void-packages/srcpkgs/ungoogled-chromium/template
+sed -i "s/revision=${3-1}/revision=${4-1}/" void-packages/srcpkgs/ungoogled-chromium/template
 
 wget -q https://commondatastorage.googleapis.com/chromium-browser-official/chromium-${1}.tar.xz.hashes -P /tmp/ > /dev/null || { echo "Unable to download chromium-${1}.tar.xz.hashes"; exit 3; }
 OLD_CHROMIUM_HASH=`cat /tmp/chromium-${1}.tar.xz.hashes | grep 'sha256' | awk '{print $2}'`
@@ -69,10 +73,10 @@ git checkout -q master
 cd $UGC
 
 git add -A
-git commit -q -m "${2}"
+git commit -q -m "${2}-${4-1}"
 git push -q --set-upstream origin ${2}
 
-echo "Pushed ${2} to upstream"
+echo "Pushed ${2}-${4-1} to upstream"
 
 LATEST_COMMIT=`git log -n 1 --pretty=format:"%H"`
 git checkout -q master
@@ -81,4 +85,4 @@ git pull -q
 git cherry-pick $LATEST_COMMIT
 git push -q
 
-echo "Pushed ${2} to master ($LATEST_COMMIT)"
+echo "Pushed ${2}-${4-1} to master ($LATEST_COMMIT)"
