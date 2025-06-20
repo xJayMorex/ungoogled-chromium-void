@@ -6,9 +6,9 @@ concurrency:
 
 on:
   workflow_dispatch:
-  pull_request:
-    types:
-      - closed
+  push:
+    branches:
+      - 'master'
 
 jobs:
   Fetch:
