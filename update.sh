@@ -70,13 +70,11 @@ rm $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-130-hardware_d
 
 git checkout -q master
 
+
 cd $UGC
 
 git add -A
 git commit -q -m "${2}-${4-1}"
-git push -q --set-upstream origin ${2}
-
-echo "Pushed ${2}-${4-1} to upstream"
 
 LATEST_COMMIT=`git log -n 1 --pretty=format:"%H"`
 git checkout -q master
@@ -86,3 +84,16 @@ git cherry-pick $LATEST_COMMIT
 git push -q
 
 echo "Pushed ${2}-${4-1} to master ($LATEST_COMMIT)"
+
+
+git checkout -q ${2}
+
+sed -i "s/${1}_${3-1}/${2}_${4-1}/" version
+
+git add -A
+git commit -q -m "${2}-${4-1}"
+git push -q --set-upstream origin ${2}
+
+echo "Pushed ${2}-${4-1} to upstream"
+
+git checkout -q master
