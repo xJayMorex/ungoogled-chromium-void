@@ -42,12 +42,48 @@ jobs:
           echo "version=$( cat master/void-packages/srcpkgs/ungoogled-chromium/template | grep -m 1 'version=' | awk -F '=' '{ print $2 }' )" >> $GITHUB_OUTPUT
           echo "revision=$( cat master/void-packages/srcpkgs/ungoogled-chromium/template | grep -m 1 'revision=' | awk -F '=' '{ print $2 }' )" >> $GITHUB_OUTPUT
 
-  Sign:
+  Build:
     needs: [Fetch]
     strategy:
       max-parallel: 1
       matrix:
-        arch: [x86_64, aarch64-musl]
+        arch: [x86_64, x86_64-musl]
+    runs-on: self-hosted
+    timeout-minutes: 720
+    steps:
+      - name: Bootstrap ${{ matrix.arch }}
+        run: |
+          cd void-packages
+          ./xbps-src -H /repository -A ${{ matrix.arch }} binary-bootstrap
+      - name: Build ${{ matrix.arch }}
+        run: |
+          cd void-packages
+          ./xbps-src -H /repository -A ${{ matrix.arch }} fetch ${{ needs.Fetch.outputs.package }}
+          ./xbps-src -H /repository -A ${{ matrix.arch }} -C pkg ${{ needs.Fetch.outputs.package }}
+
+  Build-aarch:
+    needs: [Fetch, Build]
+    strategy:
+      max-parallel: 1
+      matrix:
+        arch: [aarch64, aarch64-musl]
+        exclude:
+          - arch: aarch64-musl
+    runs-on: self-hosted
+    timeout-minutes: 720
+    steps:
+      - name: Build ${{ matrix.arch }}
+        run: |
+          cd void-packages
+          ./xbps-src -H /repository -a ${{ matrix.arch }} fetch ${{ needs.Fetch.outputs.package }}
+          ./xbps-src -H /repository -a ${{ matrix.arch }} -C pkg ${{ needs.Fetch.outputs.package }}
+
+  Sign:
+    needs: [Fetch, Build, Build-aarch]
+    strategy:
+      max-parallel: 1
+      matrix:
+        arch: [x86_64, x86_64-musl, aarch64, aarch64-musl]
         exclude:
           - arch: aarch64-musl
     runs-on: self-hosted
@@ -78,8 +114,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           body: |
-            "Chromium release: <a href='https://chromium.googlesource.com/chromium/src/+/refs/tags/${{ needs.Fetch.outputs.version }}'>${{ needs.Fetch.outputs.version }}</a><br>
-            Ungoogled Chromium release: <a href='https://github.com/ungoogled-software/ungoogled-chromium/releases/tag/${{ needs.Fetch.outputs.version }}-${{ needs.Fetch.outputs.revision }}'>${{ needs.Fetch.outputs.version }}-${{ needs.Fetch.outputs.revision }}</a>"
+            Chromium release: <a href='https://chromium.googlesource.com/chromium/src/+/refs/tags/${{ needs.Fetch.outputs.version }}'>${{ needs.Fetch.outputs.version }}</a><br>
+            Ungoogled Chromium release: <a href='https://github.com/ungoogled-software/ungoogled-chromium/releases/tag/${{ needs.Fetch.outputs.version }}-${{ needs.Fetch.outputs.revision }}'>${{ needs.Fetch.outputs.version }}-${{ needs.Fetch.outputs.revision }}</a>
           files: |
             /repository/binpkgs/${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.xbps
             /repository/binpkgs/${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.xbps.sha256sum
