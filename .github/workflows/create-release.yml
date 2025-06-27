@@ -43,7 +43,7 @@ jobs:
           echo "revision=$( cat master/void-packages/srcpkgs/ungoogled-chromium/template | grep -m 1 'revision=' | awk -F '=' '{ print $2 }' )" >> $GITHUB_OUTPUT
 
   Build-aarch:
-    needs: [Fetch, Build]
+    needs: [Fetch]
     strategy:
       max-parallel: 1
       matrix:
@@ -60,7 +60,7 @@ jobs:
           ./xbps-src -H /repository -a ${{ matrix.arch }} -C pkg ${{ needs.Fetch.outputs.package }}
 
   Sign:
-    needs: [Fetch, Build, Build-aarch]
+    needs: [Fetch, Build-aarch]
     strategy:
       max-parallel: 1
       matrix:
