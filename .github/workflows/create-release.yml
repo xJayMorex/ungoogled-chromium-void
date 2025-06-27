@@ -50,6 +50,7 @@ jobs:
         arch: [x86_64, x86_64-musl]
         exclude:
           - arch: x86_64
+          - arch: x86_64-musl
     runs-on: self-hosted
     timeout-minutes: 720
     steps:
@@ -87,6 +88,7 @@ jobs:
       matrix:
         arch: [x86_64, x86_64-musl, aarch64, aarch64-musl]
         exclude:
+          - arch: x86_64-musl
           - arch: aarch64-musl
     runs-on: self-hosted
     env:

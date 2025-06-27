@@ -160,8 +160,8 @@ do_configure() {
 
 	if true; then
 		# compile gn early, so it can be used to generate gni stuff
-		AR="ar" CC=$BUILD_CC CXX=$BUILD_CXX LD=$BUILD_CXX \
-			CFLAGS=$BUILD_CFLAGS CXXFLAGS=$BUILD_CXXFLAGS LDFLAGS=$LDFLAGS \
+		AR="ar" CC=$CC_FOR_BUILD CXX=$CXX_FOR_BUILD LD=$CXX_FOR_BUILD \
+			CFLAGS=$CFLAGS_FOR_BUILD CXXFLAGS=$CXXFLAGS_FOR_BUILD LDFLAGS=$LDFLAGS_FOR_BUILD \
 			tools/gn/bootstrap/bootstrap.py ${makejobs} --skip-generate-buildfiles
 	fi
 
