@@ -42,29 +42,12 @@ jobs:
           echo "version=$( cat master/void-packages/srcpkgs/ungoogled-chromium/template | grep -m 1 'version=' | awk -F '=' '{ print $2 }' )" >> $GITHUB_OUTPUT
           echo "revision=$( cat master/void-packages/srcpkgs/ungoogled-chromium/template | grep -m 1 'revision=' | awk -F '=' '{ print $2 }' )" >> $GITHUB_OUTPUT
 
-  Build-aarch:
+  Sign:
     needs: [Fetch]
     strategy:
       max-parallel: 1
       matrix:
-        arch: [aarch64, aarch64-musl]
-        exclude:
-          - arch: aarch64-musl
-    runs-on: self-hosted
-    timeout-minutes: 720
-    steps:
-      - name: Build ${{ matrix.arch }}
-        run: |
-          cd void-packages
-          ./xbps-src -H /repository -a ${{ matrix.arch }} fetch ${{ needs.Fetch.outputs.package }}
-          ./xbps-src -H /repository -a ${{ matrix.arch }} -C pkg ${{ needs.Fetch.outputs.package }}
-
-  Sign:
-    needs: [Fetch, Build-aarch]
-    strategy:
-      max-parallel: 1
-      matrix:
-        arch: [x86_64, aarch64, aarch64-musl]
+        arch: [x86_64, aarch64-musl]
         exclude:
           - arch: aarch64-musl
     runs-on: self-hosted
