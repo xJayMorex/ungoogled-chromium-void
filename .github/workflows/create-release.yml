@@ -114,7 +114,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           body: |
-            Chromium release: <a href='https://chromium.googlesource.com/chromium/src/+/refs/tags/${{ needs.Fetch.outputs.version }}'>${{ needs.Fetch.outputs.version }}</a><br>
+            Chromium release: <a href='https://chromium.googlesource.com/chromium/src/+/refs/tags/${{ needs.Fetch.outputs.version }}'>${{ needs.Fetch.outputs.version }}</a>
             Ungoogled Chromium release: <a href='https://github.com/ungoogled-software/ungoogled-chromium/releases/tag/${{ needs.Fetch.outputs.version }}-${{ needs.Fetch.outputs.revision }}'>${{ needs.Fetch.outputs.version }}-${{ needs.Fetch.outputs.revision }}</a>
           files: |
             /repository/binpkgs/${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.xbps
