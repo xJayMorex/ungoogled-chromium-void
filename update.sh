@@ -66,7 +66,8 @@ git checkout -q $CHROMIUM_HASH
 cp -r srcpkgs/chromium/patches $UGC/void-packages/srcpkgs/ungoogled-chromium/
 
 # remove redundant patches
-rm $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-130-hardware_destructive_interference_size.patch
+rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-130-hardware_destructive_interference_size.patch
+rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/cr138-musl-gtk-serinfo.patch
 
 git checkout -q master
 
