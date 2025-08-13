@@ -68,6 +68,8 @@ cp -r srcpkgs/chromium/patches $UGC/void-packages/srcpkgs/ungoogled-chromium/
 # remove redundant patches
 rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-130-hardware_destructive_interference_size.patch
 rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/cr138-musl-gtk-serinfo.patch
+rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-119-fix-aarch64-musl.patch
+rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-revert-drop-of-system-java.patch
 
 git checkout -q master
 
