@@ -72,6 +72,8 @@ rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-119-fix-aar
 rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-revert-drop-of-system-java.patch
 rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/fc-cache-version.patch
 rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-138-musl-toolchain.patch
+rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-140-8393b61.patch
+rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-140-8393b61.patch.args
 
 git checkout -q master
 
