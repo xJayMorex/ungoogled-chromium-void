@@ -97,6 +97,9 @@ post_patch() {
 	vsed -i 's/OFFICIAL_BUILD/GOOGLE_CHROME_BUILD/' \
 		tools/generate_shim_headers/generate_shim_headers.py
 
+	# For some reason the patch.args file gets ignored
+	patch -Np1 -R -i "${FILESDIR}"/chromium-140-8393b61.patch
+
 	# Ungoogled Chromium prune, patch, domain substitution
 	msg_normal "Applying Feng Shui Shaders ...\n"
 	local ucdir="../${pkgname}-${version}-${revision}"
