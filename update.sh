@@ -74,6 +74,7 @@ rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/fc-cache-version.pat
 rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-138-musl-toolchain.patch
 rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-140-8393b61.patch
 rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-140-8393b61.patch.args
+rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/aarch64-musl-no-memory-tagging.patch
 
 git checkout -q master
 
