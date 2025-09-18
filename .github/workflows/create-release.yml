@@ -50,7 +50,7 @@ jobs:
         arch: [x86_64, x86_64-musl]
     runs-on: self-hosted
     env:
-      CONNECTION_TIMEOUT: -1
+      CONNECTION_TIMEOUT: 1200000
     timeout-minutes: 720
     steps:
       - name: Bootstrap ${{ matrix.arch }}
