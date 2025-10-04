@@ -34,7 +34,7 @@ jobs:
 
       - name: Configure void-packages
         run: |
-          cp -r master/void-packages ./ 2>/dev/null
+          cp -r master/void-packages ./ 2> /dev/null
 
       - id: version
         run: |
@@ -57,10 +57,17 @@ jobs:
         run: |
           cd void-packages
           ./xbps-src -H /repository -A ${{ matrix.arch }} binary-bootstrap
-      - name: Build ${{ matrix.arch }}
+      - name: Fetch ${{ matrix.arch }}
         run: |
           cd void-packages
           ./xbps-src -H /repository -A ${{ matrix.arch }} fetch ${{ needs.Fetch.outputs.package }}
+      - name: Configure ${{ matrix.arch }}
+        run: |
+          cd void-packages
+          ./xbps-src -H /repository -A ${{ matrix.arch }} -C configure ${{ needs.Fetch.outputs.package }}
+      - name: Build ${{ matrix.arch }}
+        run: |
+          cd void-packages
           ./xbps-src -H /repository -A ${{ matrix.arch }} -C pkg ${{ needs.Fetch.outputs.package }}
 
   Build-aarch:
@@ -74,10 +81,17 @@ jobs:
     runs-on: self-hosted
     timeout-minutes: 720
     steps:
-      - name: Build ${{ matrix.arch }}
+      - name: Fetch ${{ matrix.arch }}
         run: |
           cd void-packages
           ./xbps-src -H /repository -a ${{ matrix.arch }} fetch ${{ needs.Fetch.outputs.package }}
+      - name: Configure ${{ matrix.arch }}
+        run: |
+          cd void-packages
+          ./xbps-src -H /repository -a ${{ matrix.arch }} -C configure ${{ needs.Fetch.outputs.package }}
+      - name: Build ${{ matrix.arch }}
+        run: |
+          cd void-packages
           ./xbps-src -H /repository -a ${{ matrix.arch }} -C pkg ${{ needs.Fetch.outputs.package }}
 
   Sign:
@@ -91,14 +105,15 @@ jobs:
     runs-on: self-hosted
     env:
       XBPS_TARGET_ARCH: ${{ matrix.arch }}
+      XBPS_PASSPHRASE: ${{ secrets.SUPERBIA }}
     steps:
       - name: Sign ${{ matrix.arch }} package
         run: |
           cd /repository/binpkgs
           rm -f ${{ matrix.arch }}-repodata
           xbps-rindex --add $PWD/${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.${{ matrix.arch }}.xbps
-          XBPS_PASSPHRASE=${{ secrets.SUPERBIA }} xbps-rindex --sign --signedby "xJayMorex" --privkey /repository/xJayMorex.pem $PWD
-          XBPS_PASSPHRASE=${{ secrets.SUPERBIA }} xbps-rindex --sign-pkg --privkey /repository/xJayMorex.pem \
+          xbps-rindex --sign --signedby "xJayMorex" --privkey /repository/xJayMorex.pem $PWD
+          xbps-rindex --sign-pkg --privkey /repository/xJayMorex.pem \
             $PWD/${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.${{ matrix.arch }}.xbps
           sha256sum ${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.${{ matrix.arch }}.xbps > \
             ${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.${{ matrix.arch }}.xbps.sha256sum

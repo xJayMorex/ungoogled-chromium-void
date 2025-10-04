@@ -395,8 +395,7 @@ do_install() {
 		${DESTDIR}/usr/share/applications/${pkgname}.desktop
 }
 
-chromium-qt6_package() {
-	wrksrc="/builddir/${pkgname}-${version}"
+ungoogled-chromium-qt6_package() {
 	depends="${sourcepkg}>=${version}_${revision}"
 	short_desc+=" - Qt6 integration"
 	pkg_install() {
