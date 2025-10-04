@@ -396,6 +396,7 @@ do_install() {
 }
 
 chromium-qt6_package() {
+	wrksrc="/builddir/${pkgname}-${version}"
 	depends="${sourcepkg}>=${version}_${revision}"
 	short_desc+=" - Qt6 integration"
 	pkg_install() {
