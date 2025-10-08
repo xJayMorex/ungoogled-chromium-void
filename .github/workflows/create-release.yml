@@ -112,11 +112,16 @@ jobs:
           cd /repository/binpkgs
           rm -f ${{ matrix.arch }}-repodata
           xbps-rindex --add $PWD/${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.${{ matrix.arch }}.xbps
+          xbps-rindex --add $PWD/${{ needs.Fetch.outputs.package }}-qt6-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.${{ matrix.arch }}.xbps
           xbps-rindex --sign --signedby "xJayMorex" --privkey /repository/xJayMorex.pem $PWD
           xbps-rindex --sign-pkg --privkey /repository/xJayMorex.pem \
             $PWD/${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.${{ matrix.arch }}.xbps
+          xbps-rindex --sign-pkg --privkey /repository/xJayMorex.pem \
+            $PWD/${{ needs.Fetch.outputs.package }}-qt6-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.${{ matrix.arch }}.xbps
           sha256sum ${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.${{ matrix.arch }}.xbps > \
             ${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.${{ matrix.arch }}.xbps.sha256sum
+          sha256sum ${{ needs.Fetch.outputs.package }}-qt6-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.${{ matrix.arch }}.xbps > \
+            ${{ needs.Fetch.outputs.package }}-qt6-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.${{ matrix.arch }}.xbps.sha256sum
 
   Release:
     needs: [Fetch, Sign]
@@ -126,6 +131,7 @@ jobs:
         run: |
           cd /repository/binpkgs
           cat ${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.xbps.sha256sum | sha256sum -c
+          cat ${{ needs.Fetch.outputs.package }}-qt6-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.xbps.sha256sum | sha256sum -c
 
       - name: Publish
         uses: softprops/action-gh-release@v2
@@ -135,8 +141,11 @@ jobs:
             Ungoogled Chromium release: <a href='https://github.com/ungoogled-software/ungoogled-chromium/releases/tag/${{ needs.Fetch.outputs.version }}-${{ needs.Fetch.outputs.revision }}'>${{ needs.Fetch.outputs.version }}-${{ needs.Fetch.outputs.revision }}</a>
           files: |
             /repository/binpkgs/${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.xbps
+            /repository/binpkgs/${{ needs.Fetch.outputs.package }}-qt6-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.xbps
             /repository/binpkgs/${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.xbps.sha256sum
+            /repository/binpkgs/${{ needs.Fetch.outputs.package }}-qt6-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.xbps.sha256sum
             /repository/binpkgs/${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.sig2
+            /repository/binpkgs/${{ needs.Fetch.outputs.package }}-qt6-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.sig2
             /repository/binpkgs/*-repodata
           tag_name: "${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}"
 
