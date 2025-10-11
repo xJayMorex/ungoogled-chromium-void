@@ -32,18 +32,40 @@ jobs:
           repository: void-linux/void-packages
           path: void-packages
 
-      - name: Configure void-packages
-        run: |
-          cp -r master/void-packages ./ 2> /dev/null
-
       - id: version
         run: |
           echo "package=ungoogled-chromium" >> $GITHUB_OUTPUT
           echo "version=$( cat master/void-packages/srcpkgs/ungoogled-chromium/template | grep -m 1 'version=' | awk -F '=' '{ print $2 }' )" >> $GITHUB_OUTPUT
           echo "revision=$( cat master/void-packages/srcpkgs/ungoogled-chromium/template | grep -m 1 'revision=' | awk -F '=' '{ print $2 }' )" >> $GITHUB_OUTPUT
 
-  Build:
+  Configure:
     needs: [Fetch]
+    strategy:
+      max-parallel: 1
+      matrix:
+        arch: [x86_64, x86_64-musl, aarch64, aarch64-musl]
+        exclude:
+          - arch: aarch64-musl
+    runs-on: self-hosted
+    steps:
+      - name: Configure ${{ matrix.arch }} void-packages
+        run: |
+          mkdir -p ${{ matrix.arch }}
+          cp -r void-packages ${{ matrix.arch }}/ 2> /dev/null
+          cp -r master/void-packages ${{ matrix.arch }}/ 2> /dev/null
+      - name: Bootstrap ${{ matrix.arch }} (x86)
+        if: matrix.arch == 'x86_64' || matrix.arch == 'x86_64-musl'
+        run: |
+          cd ${{ matrix.arch }}/void-packages
+          ./xbps-src -H /repository -A ${{ matrix.arch }} binary-bootstrap
+      - name: Bootstrap ${{ matrix.arch }} (aarch64)
+        if: matrix.arch == 'aarch64'
+        run: |
+          cd ${{ matrix.arch }}/void-packages
+          ./xbps-src -H /repository binary-bootstrap
+
+  Build:
+    needs: [Fetch, Configure]
     strategy:
       max-parallel: 1
       matrix:
@@ -53,25 +75,21 @@ jobs:
       CONNECTION_TIMEOUT: 1200000
     timeout-minutes: 720
     steps:
-      - name: Bootstrap ${{ matrix.arch }}
-        run: |
-          cd void-packages
-          ./xbps-src -H /repository -A ${{ matrix.arch }} binary-bootstrap
       - name: Fetch ${{ matrix.arch }}
         run: |
-          cd void-packages
+          cd ${{ matrix.arch }}/void-packages
           ./xbps-src -H /repository -A ${{ matrix.arch }} fetch ${{ needs.Fetch.outputs.package }}
       - name: Configure ${{ matrix.arch }}
         run: |
-          cd void-packages
+          cd ${{ matrix.arch }}/void-packages
           ./xbps-src -H /repository -A ${{ matrix.arch }} -C configure ${{ needs.Fetch.outputs.package }}
       - name: Build ${{ matrix.arch }}
         run: |
-          cd void-packages
+          cd ${{ matrix.arch }}/void-packages
           ./xbps-src -H /repository -A ${{ matrix.arch }} -C pkg ${{ needs.Fetch.outputs.package }}
 
   Build-aarch:
-    needs: [Fetch, Build]
+    needs: [Fetch, Configure, Build]
     strategy:
       max-parallel: 1
       matrix:
@@ -83,15 +101,15 @@ jobs:
     steps:
       - name: Fetch ${{ matrix.arch }}
         run: |
-          cd void-packages
+          cd ${{ matrix.arch}}/void-packages
           ./xbps-src -H /repository -a ${{ matrix.arch }} fetch ${{ needs.Fetch.outputs.package }}
       - name: Configure ${{ matrix.arch }}
         run: |
-          cd void-packages
+          cd ${{ matrix.arch }}/void-packages
           ./xbps-src -H /repository -a ${{ matrix.arch }} -C configure ${{ needs.Fetch.outputs.package }}
       - name: Build ${{ matrix.arch }}
         run: |
-          cd void-packages
+          cd ${{ matrix.arch }}/void-packages
           ./xbps-src -H /repository -a ${{ matrix.arch }} -C pkg ${{ needs.Fetch.outputs.package }}
 
   Sign:
