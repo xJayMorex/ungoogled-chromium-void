@@ -22,12 +22,12 @@ jobs:
       name: release
     steps:
       - name: Fetch repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           path: master
 
       - name: Fetch void-packages
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: void-linux/void-packages
           path: void-packages
@@ -152,7 +152,7 @@ jobs:
           cat ${{ needs.Fetch.outputs.package }}-qt6-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.xbps.sha256sum | sha256sum -c
 
       - name: Publish
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v2.4.1
         with:
           body: |
             Chromium release: <a href='https://chromium.googlesource.com/chromium/src/+/refs/tags/${{ needs.Fetch.outputs.version }}'>${{ needs.Fetch.outputs.version }}</a>
@@ -160,8 +160,6 @@ jobs:
           files: |
             /repository/binpkgs/${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.xbps
             /repository/binpkgs/${{ needs.Fetch.outputs.package }}-qt6-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.xbps
-            /repository/binpkgs/${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.xbps.sha256sum
-            /repository/binpkgs/${{ needs.Fetch.outputs.package }}-qt6-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.xbps.sha256sum
             /repository/binpkgs/${{ needs.Fetch.outputs.package }}-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.sig2
             /repository/binpkgs/${{ needs.Fetch.outputs.package }}-qt6-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.sig2
             /repository/binpkgs/*-repodata
