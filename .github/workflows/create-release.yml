@@ -51,8 +51,8 @@ jobs:
       - name: Configure ${{ matrix.arch }} void-packages
         run: |
           mkdir -p ${{ matrix.arch }}
-          cp -r void-packages ${{ matrix.arch }}/ 2> /dev/null
-          cp -r master/void-packages ${{ matrix.arch }}/ 2> /dev/null
+          cp -rf void-packages ${{ matrix.arch }}/ 2> /dev/null
+          cp -rf master/void-packages ${{ matrix.arch }}/ 2> /dev/null
       - name: Bootstrap ${{ matrix.arch }} (x86)
         if: matrix.arch == 'x86_64' || matrix.arch == 'x86_64-musl'
         run: |
