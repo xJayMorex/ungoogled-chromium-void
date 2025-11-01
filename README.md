@@ -36,11 +36,12 @@ cd ungoogled-chromium-void
 
 ```shell
 ./xbps-src show-options ungoogled-chromium
-=> ungoogled-chromium-135.0.7049.52_1: the following build options are set:
+=> ungoogled-chromium-142.0.7444.59_1: the following build options are set:
    clang: Use clang to build (ON)
    libcxx: Use bundled libc++ (ON)
    pipewire: Enable support for screen sharing for WebRTC via PipeWire (ON)
    pulseaudio: Enable support for the PulseAudio sound server (ON)
+   qt6: Enable support for qt6 (ON)
    vaapi: Enable support for VA-API (ON)
    debug: Build with debug symbols (OFF)
    drumbrake: WebAssembly Interpreter (OFF)

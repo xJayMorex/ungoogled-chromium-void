@@ -16,6 +16,7 @@ fi
 
 sed -i "s/version=${1}/version=${2}/" void-packages/srcpkgs/ungoogled-chromium/template
 sed -i "s/revision=${3-1}/revision=${4-1}/" void-packages/srcpkgs/ungoogled-chromium/template
+sed -i "s/chromium-${1}/chromium-${2}/" void-packages/srcpkgs/ungoogled-chromium/patches/*.patch.args
 
 wget -q https://github.com/chromium-linux-tarballs/chromium-tarballs/releases/download/${1}/chromium-${1}-linux.tar.xz.hashes -P /tmp/ > /dev/null || { echo "Unable to download chromium-${1}-linux.tar.xz.hashes"; exit 3; }
 OLD_CHROMIUM_HASH=`cat /tmp/chromium-${1}-linux.tar.xz.hashes | grep 'sha256' | awk '{print $2}'`
@@ -72,9 +73,11 @@ rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-119-fix-aar
 rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-revert-drop-of-system-java.patch
 rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/fc-cache-version.patch
 rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-138-musl-toolchain.patch
-rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-140-8393b61.patch
-rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-140-8393b61.patch.args
 rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/aarch64-musl-no-memory-tagging.patch
+rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-115-compiler-SkColor4f.patch
+rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-126-split-threshold-for-reg-with-hint.patch
+rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-141-fc-cache-version.patch
+rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/reenable-linux-i686-builds.patch
 
 git checkout -q master
 
