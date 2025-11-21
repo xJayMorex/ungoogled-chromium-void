@@ -36,7 +36,7 @@ _commit_id="633d41748b17aa4490cf2cff95a71d6a7907c7a8" #cachegen
 distfiles="https://github.com/chromium-linux-tarballs/chromium-tarballs/releases/download/${version}/chromium-${version}-linux.tar.xz
  ${homepage}/archive/$( [[ -n "${_commit_id:-}" ]] && echo "${_commit_id}.tar.gz" || echo "refs/tags/${version}-${revision}.tar.gz" )"
 checksum="d1d2e4a0b8c6fcd824efd02cca2e9dc2da425418291299dbc0e06ef5ae878a60
- ec3584995b6a69373fc06f6230602c1ebc68f802feedba44c962dc25bb896e33"
+ 1941975804a6aca6764e95ca969fdfff19423264ee4223c4836d51258c0d6806"
 
 lib32disabled=yes
 
