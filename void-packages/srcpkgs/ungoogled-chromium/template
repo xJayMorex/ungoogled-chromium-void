@@ -1,8 +1,9 @@
 # Template file for 'ungoogled-chromium'
 pkgname=ungoogled-chromium
 # See https://chromiumdash.appspot.com/releases?platform=Linux for the latest version
-version=143.0.7499.169
+version=146.0.7680.177
 revision=1
+_rollup=4.22.4
 archs="i686* x86_64* aarch64* armv7l*"
 _llvmver=21
 hostmakedepends="
@@ -31,12 +32,16 @@ maintainer="xJayMorex <github@johntaylor.hu>"
 license="BSD-3-Clause"
 homepage="https://github.com/ungoogled-software/ungoogled-chromium"
 _commit_id="" #cachegen
-# distfiles="https://chromium-tarballs.distfiles.gentoo.org/chromium-${version}.tar.xz"
-# distfiles="https://github.com/chromium-linux-tarballs/chromium-tarballs/releases/download/${version}/chromium-${version}-linux.tar.xz
-distfiles="https://commondatastorage.googleapis.com/chromium-browser-official/chromium-${version}.tar.xz
- ${homepage}/archive/$( [[ -n "${_commit_id:-}" ]] && echo "${_commit_id}.tar.gz" || echo "refs/tags/${version}-${revision}.tar.gz" )"
-checksum="9c7d2fa3a27c296e63e7c1dcacfc8447aa3f565fb1d7e13ecb76caef97a6deaf
- 9061f9e31b36d1038a0880ca20749f8471ab5c48a8410e288ccce9721c467c84"
+# distfiles="https://commondatastorage.googleapis.com/chromium-browser-official/chromium-${version}.tar.xz
+# distfiles="https://chromium-tarballs.distfiles.gentoo.org/chromium-${version}.tar.xz
+# distfiles="https://chromium.googlesource.com/chromium/src.git/+archive/refs/tags/${version}.tar.gz
+distfiles="https://github.com/chromium-linux-tarballs/chromium-tarballs/releases/download/${version}/chromium-${version}-linux.tar.xz
+ ${homepage}/archive/$( [[ -n "${_commit_id:-}" ]] && echo "${_commit_id}.tar.gz" || echo "refs/tags/${version}-${revision}.tar.gz" )
+ https://registry.npmjs.org/@rollup/wasm-node/-/wasm-node-${_rollup}.tgz"
+checksum="b0dbfa58893c4ae6e8bb074b86fd2ebf107dbf1604b5f60bda162df712808c0c
+ 0b3e5d4f6c723bfde22ce8878d5102aff4c8cdc72b71cb8003ca949dc17782c1
+ ee49bf67bd9bee869405af78162d028e2af0fcfca80497404f56b1b99f272717"
+skip_extraction="wasm-node-${_rollup}.tgz"
 
 lib32disabled=yes
 
@@ -76,6 +81,10 @@ if [ ! "$XBPS_WORDSIZE" = "$XBPS_TARGET_WORDSIZE" ]; then
 	broken="chromium (v8) can only be cross compiled if word size matches"
 fi
 
+case "${XBPS_TARGET_MACHINE}" in
+	i686*) broken="v8 mksnapshot segfault" ;;
+esac
+
 if [ "$CROSS_BUILD" ]; then
 	case "${XBPS_TARGET_MACHINE}" in
 		aarch64*) ;;
@@ -85,9 +94,17 @@ fi
 
 pre_patch() { [ -n "${_commit_id:-}" ] && [ -d "../${pkgname}-${_commit_id}" ] && mv "../${pkgname}-${_commit_id}" "../${pkgname}-${version}-${revision}"; true; }
 
+subpackages="" # xbps-src does not reset the variable
 if [ "$build_option_qt6" ]; then
 	subpackages+=" ungoogled-chromium-qt6"
 fi
+
+post_extract() {
+	local ucdir="chromium-${version}"
+	rm -rv $ucdir/third_party/devtools-frontend/src/node_modules/rollup
+	mkdir $ucdir/third_party/devtools-frontend/src/node_modules/rollup
+	vsrcextract -C $ucdir/third_party/devtools-frontend/src/node_modules/rollup --strip-components=1 "wasm-node-${_rollup}.tgz"
+}
 
 post_patch() {
 	if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
@@ -108,6 +125,10 @@ post_patch() {
 	# Ungoogled Chromium prune, patch, domain substitution
 	msg_normal "Applying Feng Shui Shaders ...\n"
 	local ucdir="../${pkgname}-${version}-${revision}"
+	# Remove conflicting patches
+	msg_normal "Reverse Engineering Image Consultant ...\n"
+	# Rather than removing 3 patches from the void package remove build-with-wasm-rollup.patch
+	sed -i '\|^core/ungoogled-chromium/build-with-wasm-rollup\.patch$|d' ${ucdir}/patches/series
 	msg_normal "Binding Sapling Root System ...\n"
 	$ucdir/utils/prune_binaries.py . $ucdir/pruning.list
 	msg_normal "Calculating Inverse Probability Matrices ...\n"
@@ -162,6 +183,8 @@ _setup_toolchain() {
 	if [ "$build_option_clang" ]; then
 		_setup_clang
 	fi
+	# XXX: need for error: the option `Z` is only accepted on the nightly compiler
+	export RUSTC_BOOTSTRAP=1
 }
 
 do_configure() {
@@ -240,7 +263,7 @@ do_configure() {
 		'rust_sysroot_absolute="/usr"'
 		"rust_cross_sysroot_absolute=\"${XBPS_CROSS_BASE}\""
 		'rust_bindgen_root="/usr"'
-		"rustc_version=\"$(rustc --version)\""
+		"rustc_version=\"$(rustc --version | cut -d' ' -f2)\""
 
 		'node_version_check=false'
 
@@ -401,11 +424,17 @@ do_install() {
 	vman chrome/app/resources/manpage.1.in ${pkgname}.1
 
 	sed -i \
-		-e 's/@@MENUNAME@@/Ungoogled-Chromium/g' \
-		-e 's/@@PACKAGE@@/ungoogled-chromium/g' \
-		-e 's/@@USR_BIN_SYMLINK_NAME@@/ungoogled-chromium/g' \
+		-e 's/@@MENUNAME/Ungoogled-Chromium/g' \
+		-e 's/@@PACKAGE/ungoogled-chromium/g' \
+		-e 's/@@usr_bin_symlink_name/ungoogled-chromium/g' \
+		-e '/@@uri_scheme/d' \
+		-e '/@@extra_desktop_entries/d' \
 		${DESTDIR}/usr/share/man/man1/${pkgname}.1 \
 		${DESTDIR}/usr/share/applications/${pkgname}.desktop
+
+	if grep '@@' "${DESTDIR}/usr/share/applications/${pkgname}.desktop"; then
+		msg_error "missing substitution"
+	fi
 }
 
 ungoogled-chromium-qt6_package() {
