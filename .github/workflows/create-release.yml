@@ -134,7 +134,7 @@ jobs:
           cat ${{ needs.Fetch.outputs.package }}-qt6-${{ needs.Fetch.outputs.version }}_${{ needs.Fetch.outputs.revision }}.*.xbps.sha256sum | sha256sum -c
 
       - name: Publish
-        uses: softprops/action-gh-release@v2.4.1
+        uses: softprops/action-gh-release@v3.0.0
         with:
           body: |
             Chromium release: <a href='https://chromium.googlesource.com/chromium/src/+/refs/tags/${{ needs.Fetch.outputs.version }}'>${{ needs.Fetch.outputs.version }}</a>
