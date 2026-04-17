@@ -78,6 +78,8 @@ rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-115-compile
 rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-126-split-threshold-for-reg-with-hint.patch
 rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-141-fc-cache-version.patch
 rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/reenable-linux-i686-builds.patch
+rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/files/musl-patches/libc++-musl.patch
+rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-124-iwyu-sys-select-dawn-terminal.patch
 
 git checkout -q master
 
