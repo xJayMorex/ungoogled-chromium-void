@@ -4,6 +4,9 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: false
 
+on:
+  workflow_dispatch:
+
 jobs:
   Fetch:
     runs-on: self-hosted
