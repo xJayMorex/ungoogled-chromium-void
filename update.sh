@@ -80,6 +80,7 @@ rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-141-fc-cach
 rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/reenable-linux-i686-builds.patch
 rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/files/musl-patches/libc++-musl.patch
 rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-124-iwyu-sys-select-dawn-terminal.patch
+rm -f $UGC/void-packages/srcpkgs/ungoogled-chromium/patches/chromium-146-rust-pre1.95-bytemuck.patch
 
 git checkout -q master
 
