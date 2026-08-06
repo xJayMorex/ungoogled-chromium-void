@@ -4,3 +4,5 @@
 - Build
 	- [ ] x86-64
 	- [ ] x86-64-musl
+	- [ ] aarch64
+	- [ ] ~~aarch64-musl~~
