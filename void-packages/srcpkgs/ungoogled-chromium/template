@@ -1,7 +1,7 @@
 # Template file for 'ungoogled-chromium'
 pkgname=ungoogled-chromium
 # See https://chromiumdash.appspot.com/releases?platform=Linux for the latest version
-version=151.0.7922.173
+version=152.0.7977.64
 revision=1
 _rollup=4.22.4
 archs="i686* x86_64* aarch64* armv7l*"
@@ -38,8 +38,8 @@ _commit_id="" #cachegen
 distfiles="https://github.com/chromium-linux-tarballs/chromium-tarballs/releases/download/${version}/chromium-${version}-linux.tar.xz
  ${homepage}/archive/$( [[ -n "${_commit_id:-}" ]] && echo "${_commit_id}.tar.gz" || echo "refs/tags/${version}-${revision}.tar.gz" )
  https://registry.npmjs.org/@rollup/wasm-node/-/wasm-node-${_rollup}.tgz"
-checksum="083eb4a98003f5b34d9fe7b3912478ef14f2ed0a16c7c2d932549b9e62aabcc4
- 82478f1fabf0d56a5fe9784fe342a7a62ea2cbe3226b32fc23fba4ba89160af1
+checksum="4f96a2d9e87778b2bab2901d88127b00c108060e9d6f424425c715366f14d435
+ e0596692c48df72f9f2181c588f0c9b778d8111e2627bdae7d00a761948a65b8
  ee49bf67bd9bee869405af78162d028e2af0fcfca80497404f56b1b99f272717"
 skip_extraction="wasm-node-${_rollup}.tgz"
 
@@ -127,9 +127,10 @@ post_patch() {
 
 	mkdir -p third_party/node/linux/node-linux-x64/bin
 	rm -f third_party/node/linux/node-linux-x64/bin/node
-	ln -s /usr/bin/node third_party/node/linux/node-linux-x64/bin/
+	ln -s /usr/bin/node third_party/node/linux/node-linux-x64/bin/node
 
 	mkdir -p third_party/dawn/tools/golang/linux-amd64/bin
+	rm -f third_party/dawn/tools/golang/linux-amd64/bin/go
 	ln -s /usr/bin/go third_party/dawn/tools/golang/linux-amd64/bin/go
 
 	rm -rv third_party/devtools-frontend/src/node_modules/rollup
@@ -216,13 +217,13 @@ do_configure() {
 	# snappy
 	# ffmpeg: system ffmpeg is too old and makes the ffmpeg update not require
 	#  rebuilding chromium
+	# libpng
 	system=(
 		flac
 		fontconfig
 		freetype
 		libdrm
 		libjpeg
-		libpng
 		libwebp
 		libxml
 		libxslt
