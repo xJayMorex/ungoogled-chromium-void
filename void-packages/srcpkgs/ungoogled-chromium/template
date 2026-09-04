@@ -1,7 +1,7 @@
 # Template file for 'ungoogled-chromium'
 pkgname=ungoogled-chromium
 # See https://chromiumdash.appspot.com/releases?platform=Linux for the latest version
-version=152.0.7977.64
+version=152.0.7977.82
 revision=1
 _rollup=4.22.4
 archs="i686* x86_64* aarch64* armv7l*"
@@ -38,8 +38,8 @@ _commit_id="" #cachegen
 distfiles="https://github.com/chromium-linux-tarballs/chromium-tarballs/releases/download/${version}/chromium-${version}-linux.tar.xz
  ${homepage}/archive/$( [[ -n "${_commit_id:-}" ]] && echo "${_commit_id}.tar.gz" || echo "refs/tags/${version}-${revision}.tar.gz" )
  https://registry.npmjs.org/@rollup/wasm-node/-/wasm-node-${_rollup}.tgz"
-checksum="4f96a2d9e87778b2bab2901d88127b00c108060e9d6f424425c715366f14d435
- e0596692c48df72f9f2181c588f0c9b778d8111e2627bdae7d00a761948a65b8
+checksum="f0ec02a2682130bc73ea8ef0d2af04dcd5236b58e6d0d9ac7b1b8e03cc90ce26
+ a672d1a84b0a7744e2bb6c9d038a2aace269db51bcf99e76895fb169a7e0c218
  ee49bf67bd9bee869405af78162d028e2af0fcfca80497404f56b1b99f272717"
 skip_extraction="wasm-node-${_rollup}.tgz"
 
